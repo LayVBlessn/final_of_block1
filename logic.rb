@@ -56,12 +56,12 @@ module Logic
 
   def check_end_of_the_game
     if @player.hand.scores == @diler.hand.scores
-      draw()
+      draw
     else
       if (21 - @player.hand.scores) < (21 - @diler.hand.scores)
-        player_wins()
+        player_wins
       else
-        diler_wins()
+        diler_wins
       end
     end
     false
@@ -92,16 +92,16 @@ module Logic
 
   def check_end_of_the_game_extern
     if @player.hand.scores == 21
-      player_wins()
+      player_wins
       false
     elsif @diler.hand.scores == 21
-      diler_wins()
+      diler_wins
       false
     elsif @player.hand.scores > 21
-      diler_wins()
+      diler_wins
       false
     elsif @diler.hand.scores > 21
-      player_wins()
+      player_wins
       false
     end
     true
@@ -122,7 +122,7 @@ module Logic
   end
 
   def player_turn
-    interface()
+    interface
     puts "1. Взять карту
 2. Пропустить ход
 3. Открыть карты"
@@ -132,13 +132,13 @@ module Logic
     case choice
     when 1
       @player.take_card(@deck.take_card!)
-      interface()
-      return check_end_of_the_game_extern()
+      interface
+      return check_end_of_the_game_extern
     when 2
       @player.skip_turn
       return true
     when 3
-      return check_end_of_the_game()
+      return check_end_of_the_game
     end
   end
 
@@ -150,8 +150,8 @@ module Logic
   def diler_turn
     if @diler.hand.scores < 17 and @diler.card_number != 3
       @diler.take_card(@deck.take_card!)
-      interface()
-      check_end_of_the_game_extern()
+      interface
+      check_end_of_the_game_extern
     else
       @diler.skip_turn
     end
