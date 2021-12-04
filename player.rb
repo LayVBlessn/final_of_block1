@@ -1,15 +1,16 @@
-class User
+require_relative 'hand'
 
-  attr_reader :name, :hand, :balance
+class User
+  attr_reader :name, :balance, :hand
 
   def initialize(name)
     @name = name
     @balance = 100
-    @hand = []
+    @hand = Hand.new
   end
 
   def card_number
-    self.hand.length
+    @hand.hand.length
   end
 
   def make_a_bet
@@ -21,21 +22,7 @@ class User
   end
 
   def take_card(card)
-    @hand << card if @hand.length != 3
-  end
-
-  def scores
-    sum = 0
-    hand.each do |card|
-      if ['J', 'Q', 'K'].include?(card.rank)
-        sum += 10
-      elsif card.rank == 'A'
-        sum+11 <= 21 ? sum +=11 : sum += 1
-      elsif card.rank.is_a?(Integer)
-        sum += card.rank.to_i
-      end
-    end
-    sum
+    @hand.add_card(card)
   end
 
   def skip_turn
@@ -43,12 +30,8 @@ class User
   end
 
   def show_cards!
-    self.hand= []
+    @hand.hand= []
   end
-
-  protected
-
-  attr_writer :hand
 
 end
 
@@ -58,10 +41,10 @@ class Diler < User
   end
 
   def take_card(card)
-    @hand << card if scores <= 17 and @hand.length!=3
+    @hand.add_card(card)
   end
 
-  def skip_turn
+  def skip_turn(card)
     nil
   end
 
