@@ -2,24 +2,14 @@ require_relative 'card'
 require_relative 'player'
 require_relative 'deck'
 
-module Logic
+class Logic
 
-  def ask_player_name
-    puts 'Здравствуйте! Представьтесь и начнем игру!'
-    print 'Введите Ваше имя: '
-    name = gets.chomp
-  end
+  attr_reader :player, :diler, :bank
 
-  def print_info
-    puts 'На данный момент у Вас и у Диллера в банке по $100.'
-    puts 'Ваша задача набрать 21 очко, либо ближайшеие к 21 очки'
-    puts 'Вы проиграете, если у вас на руке будет больше 21. Удачи!'
-  end
-
-
-  def create
-    player_name = ask_player_name
-    [User.new(player_name), Diler.new]
+  def initialize(player_name)
+    @player = User.new(player_name)
+    @diler = Diler.new
+    @bank = 0
   end
 
   def len_check
@@ -27,7 +17,7 @@ module Logic
     false
   end
 
-  def free_hands
+  def free_hands()
     @player.show_cards!
     @diler.show_cards!
   end
@@ -42,16 +32,6 @@ module Logic
     @bank = 20
     @player.make_a_bet
     @diler.make_a_bet
-  end
-
-  def interface
-    puts "#{'='*5} Дилер #{'='*5}"
-    puts "Карты: #{'*'*@diler.card_number}"
-    puts "#{'='*5} #{@player.name} #{'='*5}"
-    puts "Карты: #{@player.hand.hand.map{|card| "#{card.rank}#{card.suit}"}.join(' ,')}"
-    puts "Очки: #{@player.hand.scores}"
-    puts "Баланс: #{@player.balance}"
-    puts '='*15
   end
 
   def check_end_of_the_game
@@ -121,8 +101,8 @@ module Logic
     end
   end
 
-  def player_turn
-    interface
+  def player_turn(interface)
+    interface.call(@player, @diler)
     puts "1. Взять карту
 2. Пропустить ход
 3. Открыть карты"
@@ -132,7 +112,7 @@ module Logic
     case choice
     when 1
       @player.take_card(@deck.take_card!)
-      interface
+      interface.call(@player, @diler)
       return check_end_of_the_game_extern
     when 2
       @player.skip_turn
@@ -142,15 +122,11 @@ module Logic
     end
   end
 
-  def goodbye
-    puts "До свидания, #{@player.name}!"
-  end
 
-
-  def diler_turn
+  def diler_turn(interface)
     if @diler.hand.scores < 17 and @diler.card_number != 3
       @diler.take_card(@deck.take_card!)
-      interface
+      interface.call(@player, @diler)
       check_end_of_the_game_extern
     else
       @diler.skip_turn

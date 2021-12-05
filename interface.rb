@@ -1,34 +1,57 @@
 require_relative 'logic'
 
 class Interface
-  include Logic
 
-  def initialize
-    obj = create
-    @player = obj[0]
-    @diler = obj[1]
-    @bank = 0
+  def initialize()
+    @obj = Logic.new(self.ask_player_name)
+    @interface = lambda do |player, diler|
+      puts "#{'='*5} Дилер #{'='*5}"
+      puts "Карты: #{'*'*diler.card_number}"
+      puts "#{'='*5} #{player.name} #{'='*5}"
+      puts "Карты: #{player.hand.hand.map{|card| "#{card.rank}#{card.suit}"}.join(' ,')}"
+      puts "Очки: #{player.hand.scores}"
+      puts "Баланс: #{player.balance}"
+      puts '='*15
+    end
   end
+
+
 
   def start
     print_info
     loop do
-      free_hands
-      hand_out_cards
-      set_bank
-      if check_end_of_the_game_extern
+      @obj.free_hands
+      @obj.hand_out_cards
+      @obj.set_bank
+      if @obj.check_end_of_the_game_extern
         loop do
-          if len_check
-            break  if !check_end_of_the_game
+          if @obj.len_check
+            break  if !@obj.check_end_of_the_game
           else
-            break if !player_turn
-            break if !diler_turn
+            break if !@obj.player_turn(@interface)
+            break if !@obj.diler_turn(@inteface)
           end
         end
       end
-      break if play_next_game?
+      break if @obj.play_next_game?
     end
     goodbye
+  end
+
+  def ask_player_name
+    puts 'Здравствуйте! Представьтесь и начнем игру!'
+    print 'Введите Ваше имя: '
+    @name = gets.chomp
+  end
+
+  def print_info
+    puts 'На данный момент у Вас и у Диллера в банке по $100.'
+    puts 'Ваша задача набрать 21 очко, либо ближайшеие к 21 очки'
+    puts 'Вы проиграете, если у вас на руке будет больше 21. Удачи!'
+  end
+
+  def goodbye
+    puts "До свидания, #{@name}!"
   end
 
 end
