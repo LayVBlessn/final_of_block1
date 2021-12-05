@@ -37,11 +37,14 @@ class Logic
   def check_end_of_the_game
     if @player.hand.scores == @diler.hand.scores
       draw
+      true
     else
       if (21 - @player.hand.scores) < (21 - @diler.hand.scores)
         player_wins
+        true
       else
         diler_wins
+        true
       end
     end
     false
@@ -87,20 +90,6 @@ class Logic
     true
   end
 
-  def play_next_game?
-    puts "Хотите сыграть еще раз?
-1. Да
-2. Нет"
-    print 'Ваш выбор: '
-    choice = gets.chomp.to_i
-    case choice
-    when 1
-      false
-    when 2
-      true
-    end
-  end
-
   def player_turn(interface)
     interface.call(@player, @diler)
     puts "1. Взять карту
@@ -113,15 +102,14 @@ class Logic
     when 1
       @player.take_card(@deck.take_card!)
       interface.call(@player, @diler)
-      return check_end_of_the_game_extern
+      check_end_of_the_game_extern
     when 2
       @player.skip_turn
       return true
     when 3
-      return check_end_of_the_game
+      check_end_of_the_game
     end
   end
-
 
   def diler_turn(interface)
     if @diler.hand.scores < 17 and @diler.card_number != 3

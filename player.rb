@@ -44,7 +44,7 @@ class Diler < User
     @hand.add_card(card)
   end
 
-  def skip_turn(card)
+  def skip_turn
     nil
   end
 

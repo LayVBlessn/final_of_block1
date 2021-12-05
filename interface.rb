@@ -15,8 +15,6 @@ class Interface
     end
   end
 
-
-
   def start
     print_info
     loop do
@@ -29,11 +27,11 @@ class Interface
             break  if !@obj.check_end_of_the_game
           else
             break if !@obj.player_turn(@interface)
-            break if !@obj.diler_turn(@inteface)
+            break if !@obj.diler_turn(@interface)
           end
         end
       end
-      break if @obj.play_next_game?
+      break if play_next_game?
     end
     goodbye
   end
@@ -42,6 +40,20 @@ class Interface
     puts 'Здравствуйте! Представьтесь и начнем игру!'
     print 'Введите Ваше имя: '
     @name = gets.chomp
+  end
+
+  def play_next_game?
+    puts "Хотите сыграть еще раз?
+1. Да
+2. Нет"
+    print 'Ваш выбор: '
+    choice = gets.chomp.to_i
+    case choice
+    when 1
+      false
+    when 2
+      true
+    end
   end
 
   def print_info
